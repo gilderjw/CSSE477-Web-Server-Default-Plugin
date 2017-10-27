@@ -29,13 +29,14 @@ public class PutRequestHandler implements IRequestHandler {
 			fw.write(request.getBody());
 			fw.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			server.logException("Could not write to file in PUT request", e);
 		}
 		
 		response = rc.setResponseStatus(Protocol.OK_CODE)
 				.setResponsePhrase(Protocol.OK_TEXT)
 				.setResponseFile(file)
 				.getResponse();
+		server.logInfo("PUT request - OK");
 		
 		return response;
 	}

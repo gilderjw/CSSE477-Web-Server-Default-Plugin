@@ -37,11 +37,13 @@ public class DeleteRequestHandler implements IRequestHandler {
 					response = rc.setResponseStatus(Protocol.OK_CODE)
 						.setResponsePhrase(Protocol.DELETE_OK_TEXT)
 						.getResponse();
+					server.logInfo("DELETE request - OK");
 				} else {
 					// File does not exist so lets create 404 file not found code
 					response = rc.setResponseStatus(Protocol.NOT_FOUND_CODE)
 							.setResponsePhrase(Protocol.NOT_FOUND_TEXT)
 							.getResponse();
+					server.logInfo("DELETE request - not found");
 				}
 			} else { // Its a file
 						// Lets create 200 OK response
@@ -49,12 +51,14 @@ public class DeleteRequestHandler implements IRequestHandler {
 				response = rc.setResponseStatus(Protocol.OK_CODE)
 						.setResponsePhrase(Protocol.DELETE_OK_TEXT)
 						.getResponse();
+				server.logInfo("DELETE request - OK");
 			}
 		} else {
 			// File does not exist so lets create 404 file not found code
 			response = rc.setResponseStatus(Protocol.NOT_FOUND_CODE)
 					.setResponsePhrase(Protocol.NOT_FOUND_TEXT)
 					.getResponse();
+			server.logInfo("DELETE request - not found");
 		}
 		return response;
 	}

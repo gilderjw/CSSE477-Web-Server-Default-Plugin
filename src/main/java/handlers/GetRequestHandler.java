@@ -42,12 +42,14 @@ public class GetRequestHandler implements IRequestHandler {
 							.setResponsePhrase(Protocol.OK_TEXT)
 							.setResponseFile(file)
 							.getResponse();
+					server.logInfo("GET request - OK");
 				} else {
 					// File does not exist so lets create 404 file not found code
 					response = rc.setResponseStatus(Protocol.NOT_FOUND_CODE)
 							.setResponsePhrase(Protocol.NOT_FOUND_TEXT)
 							.setResponseFile(null)
 							.getResponse();
+					server.logInfo("GET request - not found");
 				}
 			} else { // Its a file
 						// Lets create 200 OK response
@@ -55,6 +57,7 @@ public class GetRequestHandler implements IRequestHandler {
 						.setResponsePhrase(Protocol.OK_TEXT)
 						.setResponseFile(file)
 						.getResponse();
+				server.logInfo("GET request - OK");
 			}
 		} else {
 			// File does not exist so lets create 404 file not found code
@@ -62,6 +65,7 @@ public class GetRequestHandler implements IRequestHandler {
 					.setResponsePhrase(Protocol.NOT_FOUND_TEXT)
 					.setResponseFile(null)
 					.getResponse();
+			server.logInfo("GET request - not found");
 		}
 		return response;
 	}

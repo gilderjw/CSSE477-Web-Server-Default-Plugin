@@ -35,7 +35,7 @@ public class PostRequestHandler implements IRequestHandler {
 			try {
 				file.createNewFile();
 			} catch (IOException e) {
-				e.printStackTrace();
+				server.logException("POST request - file could not be created", e);
 				return rc.setResponseStatus(Protocol.BAD_REQUEST_CODE).setResponsePhrase(Protocol.BAD_REQUEST_TEXT)
 						.setResponseFile(null).getResponse();
 			}
@@ -47,8 +47,9 @@ public class PostRequestHandler implements IRequestHandler {
 			writer.close();
 			response = rc.setResponseStatus(Protocol.OK_CODE).setResponsePhrase(Protocol.OK_TEXT).setResponseFile(file)
 					.getResponse();
+			server.logInfo("POST request - OK");
 		} catch (IOException e) {
-			e.printStackTrace();
+			server.logException("Could not write to file in POST request", e);
 			response = rc.setResponseStatus(Protocol.BAD_REQUEST_CODE).setResponsePhrase(Protocol.BAD_REQUEST_TEXT)
 					.setResponseFile(null).getResponse();
 		}

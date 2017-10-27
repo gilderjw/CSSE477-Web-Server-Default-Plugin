@@ -41,24 +41,28 @@ public class HeadRequestHandler implements IRequestHandler {
 					response = rc.setResponseStatus(Protocol.OK_CODE)
 							.setResponsePhrase(Protocol.OK_TEXT)
 							.getResponse();
+					server.logInfo("HEAD request - OK");
 					
 				} else {
 					// File does not exist so lets create 404 file not found code
 					response = rc.setResponseStatus(Protocol.NOT_FOUND_CODE)
 							.setResponsePhrase(Protocol.NOT_FOUND_TEXT)
 							.getResponse();
+					server.logInfo("HEAD request - not found");
 				}
 			} else { // Its a file
 						// Lets create 200 OK response
 				response = rc.setResponseStatus(Protocol.OK_CODE)
 						.setResponsePhrase(Protocol.OK_TEXT)
 						.getResponse();
+				server.logInfo("HEAD request - OK");
 			}
 		} else {
 			// File does not exist so lets create 404 file not found code
 			response = rc.setResponseStatus(Protocol.NOT_FOUND_CODE)
 					.setResponsePhrase(Protocol.NOT_FOUND_TEXT)
 					.getResponse();
+			server.logInfo("HEAD request - not found");
 		}
 		return response;
 
