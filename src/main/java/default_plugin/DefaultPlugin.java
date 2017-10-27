@@ -2,14 +2,14 @@ package default_plugin;
 
 import java.util.HashMap;
 
+import handlers.DeleteRequestHandler;
+import handlers.GetRequestHandler;
+import handlers.HeadRequestHandler;
 import handlers.PostRequestHandler;
+import handlers.PutRequestHandler;
 import plugins.IPlugin;
 import protocol.Protocol;
-import request_handlers.DeleteRequestHandler;
-import request_handlers.GetRequestHandler;
-import request_handlers.HeadRequestHandler;
 import request_handlers.IRequestHandler;
-import request_handlers.PutRequestHandler;
 
 public class DefaultPlugin implements IPlugin {
 

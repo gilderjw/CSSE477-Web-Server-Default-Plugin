@@ -1,0 +1,47 @@
+stages:
+  - build
+  - staging
+  - production
+
+build:
+  stage: build
+  script:
+    - ./gradlew build
+  tags:
+    - RJandJim
+
+staging:
+  stage: staging
+  script:
+    - ./gradlew distZip
+    - echo $GCP_SERVICE_KEY > /tmp/$GCP_PROJECT_ID.json
+    - gcloud auth activate-service-account --key-file /tmp/$GCP_PROJECT_ID.json
+    - gcloud compute --project $GCP_PROJECT_ID scp --zone $GCP_ZONE build/distributions/* $GCP_USER@staging:~/public_html --quiet
+    - gcloud compute ssh --zone $GCP_ZONE $GCP_USER@staging --command "unzip -o $INSTALL_DIR/WebServerDefaultPlugin-* -d $INSTALL_DIR"
+    - gcloud compute ssh --zone $GCP_ZONE $GCP_USER@staging --command "cp $INSTALL_DIR/CSSE477_Web_Server-*/* $INSTALL_DIR/plugins"
+
+   
+  after_script:
+    - rm /tmp/$GCP_PROJECT_ID.json
+  tags:
+    - RJandJim
+  only:
+    - master
+    
+production:
+  stage: production
+  script:
+    - ./gradlew distZip
+    - echo $GCP_SERVICE_KEY > /tmp/$GCP_PROJECT_ID.json
+    - gcloud auth activate-service-account --key-file /tmp/$GCP_PROJECT_ID.json
+    - gcloud compute ssh --zone $GCP_ZONE $GCP_USER@production --command "rm -rf $INSTALL_DIR/CSSE477_Web_Server-*"
+    - gcloud compute --project $GCP_PROJECT_ID scp --zone $GCP_ZONE build/distributions/* $GCP_USER@production:~/public_html --quiet
+    - gcloud compute ssh --zone $GCP_ZONE $GCP_USER@staging --command "unzip -o $INSTALL_DIR/WebServerDefaultPlugin-* -d $INSTALL_DIR"
+    - gcloud compute ssh --zone $GCP_ZONE $GCP_USER@staging --command "cp $INSTALL_DIR/CSSE477_Web_Server-*/* $INSTALL_DIR/plugins"
+    - ./gradlew publish
+  after_script:
+    - rm /tmp/$GCP_PROJECT_ID.json
+  tags:
+    - RJandJim
+  only:
+    - tags
