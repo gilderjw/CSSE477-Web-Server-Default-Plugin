@@ -2,6 +2,8 @@ stages:
   - build
   - staging
   - production
+  - e2eTesting
+  - restore
 
 build:
   stage: build
@@ -16,6 +18,7 @@ staging:
     - ./gradlew distZip
     - echo $GCP_SERVICE_KEY > /tmp/$GCP_PROJECT_ID.json
     - gcloud auth activate-service-account --key-file /tmp/$GCP_PROJECT_ID.json
+    - gcloud compute ssh --zone $GCP_ZONE $GCP_USER@staging --command "cd $INSTALL_DIR/.. && zip -r backup.zip public_html/"
     - gcloud compute ssh --zone $GCP_ZONE $GCP_USER@staging --command "rm -rf $INSTALL_DIR/WebServerDefaultPlugin-*"
     - gcloud compute --project $GCP_PROJECT_ID scp --zone $GCP_ZONE build/distributions/* $GCP_USER@staging:~/public_html --quiet
     - gcloud compute ssh --zone $GCP_ZONE $GCP_USER@staging --command "unzip -o $INSTALL_DIR/WebServerDefaultPlugin-* -d $INSTALL_DIR"
@@ -36,6 +39,7 @@ production:
     - ./gradlew distZip
     - echo $GCP_SERVICE_KEY > /tmp/$GCP_PROJECT_ID.json
     - gcloud auth activate-service-account --key-file /tmp/$GCP_PROJECT_ID.json
+    - gcloud compute ssh --zone $GCP_ZONE $GCP_USER@staging --command "cd $INSTALL_DIR/.. && zip -r backup.zip public_html/"
     - gcloud compute ssh --zone $GCP_ZONE $GCP_USER@staging --command "rm -rf $INSTALL_DIR/WebServerDefaultPlugin-*"
     - gcloud compute --project $GCP_PROJECT_ID scp --zone $GCP_ZONE build/distributions/* $GCP_USER@production:~/public_html --quiet
     - gcloud compute ssh --zone $GCP_ZONE $GCP_USER@staging --command "unzip -o $INSTALL_DIR/WebServerDefaultPlugin-* -d $INSTALL_DIR"
@@ -47,3 +51,20 @@ production:
     - RJandJim
   only:
     - tags
+    
+e2eTesting:
+  stage: e2eTesting
+  script:
+  - ./gradlew e2eTesting
+  tags:
+    - RJandJim
+    
+restore:
+  stage: restore
+  script:
+    - gcloud compute ssh --zone $GCP_ZONE $GCP_USER@staging --command "rm -rf $INSTALL_DIR/*"
+    - gcloud compute ssh --zone $GCP_ZONE $GCP_USER@staging --command "cd $INSTALL_DIR/.. && unzip -o backup.zip"
+  tags:
+    - RJandJim
+  when: on_failure
+  
