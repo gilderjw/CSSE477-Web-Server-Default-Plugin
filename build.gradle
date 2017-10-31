@@ -87,6 +87,7 @@ applicationDistribution.from("${projectDir}/application.properties") {
 test {
     testLogging.showStandardStreams = true
     environment "CI_VERSION", version
+     exclude 'e2e/RegressionTesting*'
 	jacoco {
 		append = false
 	}
@@ -126,3 +127,7 @@ jar {
 	}
 }
 
+
+task e2eTesting(type: Test) {
+	include 'e2e/RegressionTesting*'
+}
